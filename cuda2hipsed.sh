@@ -29,7 +29,7 @@ for d in $dstdir ; do
     continue
   fi
 
-  for f in $(find $d -type f -name *.c* -o -name *.h*) ; do
+  for f in $(find $d -type f -name *.c* -o -name *.h* -o -name *.inl) ; do
     echo $f
     mv $f ${f}.old
     ${HIPIFY_PERL} ${f}.old > ${f}

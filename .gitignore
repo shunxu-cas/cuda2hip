@@ -8,5 +8,6 @@
 .cproject
 .project
 .settings/
+/doc
 .DS_Store
 Makefile.rsync
