@@ -14,8 +14,8 @@ ROCm提供了hipify-perl脚本，实现CUDA代码到HIP代码的转换，其默�
   调用hipify-perl和sed脚本实现文件夹的转换
 
 # 使用方法
-主体转换用hipify-perl脚本，补充转换用cuda2hip.sed脚本。
-应用两个脚本转换之后，转码成功率会很高。
+CUDA到HIP转码通常先用hipify-perl脚本进行主体转换，再用cuda2hip.sed脚本补充转换。
+应用这两个脚本转换之后，转码成功率会很高。
 
 ## hipify-perl
 
@@ -29,8 +29,8 @@ ROCm提供了hipify-perl脚本，实现CUDA代码到HIP代码的转换，其默�
 ```
 ./cuda2hip.sh <dir>
 ```
-调用hipify-perl脚本进行代码文件夹内所有代码转换。默认通配`*.c*`和`*.h*`文件（下同）。 
-`<dir>`为待转换的CUDA代码所在目录名，可以使用空格输入多个文件目录。
+调用hipify-perl脚本进行文件夹内所有代码转换。默认通配`*.c*`和`*.h*`文件（下同）。 
+`<dir>`为待转换的CUDA代码所在目录名，可以使用空格隔空，输入多个文件目录名。
 
 ## cuda2hipsed.sh
 
@@ -52,11 +52,10 @@ ROCm提供了hipify-perl脚本，实现CUDA代码到HIP代码的转换，其默�
 ```
 sed -i -f cuda2hip.sed <files>
 ```
-`<files>`为待转换的CUDA代码文件名，可使用Shell通配符。
-其中-i表示in-place替换。
+`<files>`为待转换的CUDA代码文件名，可使用Shell通配符。`-i`表示in-place替换。
 
-- 第二种使用方式
+- 第三种使用方式
 ```
 find . -type f -name *.c* -o -name *.h* |xargs sed -i -f cuda2hip.sed
 ```
-这个使用借助find查找C/C++和CUDA代码文件，对每个查找到的文件，调用cuda2hip.sed进行转码。
+这里借助find查找C/C++和CUDA代码文件，对每个查找到的文件调用cuda2hip.sed进行转码。
