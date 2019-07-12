@@ -16,6 +16,9 @@ HIP项目的[bin目录](https://github.com/ROCm-Developer-Tools/HIP/tree/master/
 
 本项目提供一套较完善的CUDA到HIP代码转换的工具，内置了及时更新版本的hipify-perl脚本，同时提供部分脚本补充hipify-clang和hipify-perl转码的不足。
 
+# 已提交issue
+- [#1221](https://github.com/ROCm-Developer-Tools/HIP/issues/1221) 路径符字符串替换时错误。已解决。
+
 # 相关文件说明
 - hipify-perl
   基于hipify-clang最新map内容的版本
