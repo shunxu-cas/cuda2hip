@@ -3,7 +3,9 @@
 ## 转码的原理
 CUDA是NVIDIA开发的GPU SDK（软件开发框架），主要针对NVIDIA GPU硬件开发，而HIP是AMD开发的GPU SDK，主要是针对AMD GPU硬件开发，同时兼容NVIDIA GPU硬件上的开发。试想AMD为何会如此雄心壮志？其实是无奈之举。显然当今CUDA的生态处于绝对优势（dominant），AMD要想迎头赶上，必须兼容CUDA。如何实现兼容CUDA？答案就是利用HIP。
 
-HIP（Heterogeneous-Computing Interface for Portability）实际上就是构造异构计算的接口，一方面对接AMD HCC(Heterogeneous Compute Compiler)，另一方面对接CUDA NVCC。HIP位于HCC和NVCC的上层（或者说在HC和CUDA的上层），HIP的API接口与CUDA API接口类似，但不完全相同。CUDA代码需要通过转码改写为HIP形式才可以在AMD GPU上编译运行，AMD编译环境称为ROCm，提供基于Clang和LLVM开发的编译器HCC（实际上命令行hcc就是alias到clang），我们都知道Clang+LLVM是一个开源的编译器框架，除了支持C/C++编译，也支持[CUDA的编译](https://llvm.org/docs/CompileCudaWithLLVM.html#compiling-cuda-code)。AMD将Clang+LLVM进行扩展形成HCC，以支持AMD GPU编译。实际上在AMD平台，HIP是底层调用HCC编译器实现编译的（一种方式）。
+HIP（Heterogeneous-Computing Interface for Portability）实际上就是构造异构计算的接口，一方面对接AMD HCC（Heterogeneous Compute Compiler），另一方面对接CUDA NVCC。HIP位于HCC和NVCC的上层（或者说在HC和CUDA的上层），HIP的API接口与CUDA API接口类似，但不完全相同。CUDA代码需要通过转码改写为HIP形式才可以在AMD GPU上编译运行，AMD编译环境称为ROCm（Radeon Open Compute Platform），早期使用HCC/HC模式，而今主要发展基于Clang和LLVM开发的编译器，实际上命令行在Clang模式下，hcc就是alias到clang命令。我们都知道Clang+LLVM是一个开源的编译器框架，除了支持C/C++编译，也支持[CUDA的编译](https://llvm.org/docs/CompileCudaWithLLVM.html#compiling-cuda-code)。AMD将Clang+LLVM进行扩展形成HIP的底层编译器，以支持AMD GPU编译。实际上在ROCm环境，HIP有三种平台模式（通过环境变量HIP_PLATFORM区别）：clang、hcc和nvcc。而HIP提供的hipcc命令，实质是一个perl脚本，通过HIP_PLATFORM等环境变量，调用不同的底层编译器，实现统一编译模式。
+
+<img src="note/hip_workflow.png" height="300px"/>
 
 ## 转码的实现
 如果你留意，可以发现ROCm的HIP项目中提供了一个[hipify-clang](https://github.com/ROCm-Developer-Tools/HIP/tree/master/hipify-clang)的工具。这个hipify-clang工具是基于编译器的词法和语义，理论上是最可靠的一种代码转换方式。因为字面意思的文本转换难以区分API语义，如很难分别是函数名、参数名还是include头文件名等。
@@ -12,11 +14,11 @@ hipify-clang从根本上可以解决CUDA到HIP的转码，但不等于说没有�
 
 但总的来说，AMD的伙计们还是很给力，不断在更新hipify-clang，也支持最新CUDA 10.1的API转换。基于hipify-clang工具还可以生成perl转码的map文件或python转码的map文件，这里的map文件实质就是转码函数或变量名的映射代码行。一般hipify-clang是随着ROCm环境一起安装的，没法及时更新。导致hipify-clang的新功能没法应用。
 
-HIP项目的[bin目录](https://github.com/ROCm-Developer-Tools/HIP/tree/master/bin)中提供了一个名为hipify-perl的可执行的脚本，借助perl语言定义了CUDA到HIP转码的主体框架以及转换名称的map内容，这个map内容实际上是由于hipify-clang工具生成。更新了hipify-clang工具，也应该更新hipify-perl脚本。但hipify-clang工具需要Clang+LLVM的SDK环境，这是一个较复杂的开发软件环境，一般用户难以驾驭，导致编译hipify-clang有困难。
+HIP项目的[bin目录](https://github.com/ROCm-Developer-Tools/HIP/tree/master/bin)中提供了一个名为hipify-perl的可执行的脚本，借助perl语言定义了CUDA到HIP转码的主体框架以及转换名称的map内容，这个map内容实际上是由hipify-clang工具生成。更新了hipify-clang工具，也应该更新hipify-perl脚本。但hipify-clang工具需要Clang+LLVM的SDK环境，这是一个较复杂的开发软件环境，一般用户难以驾驭，导致编译hipify-clang有困难。
 
 本项目提供一套较完善的CUDA到HIP代码转换的工具，内置了及时更新版本的hipify-perl脚本，同时提供部分脚本补充hipify-clang和hipify-perl转码的不足。
 
-# 已提交issue
+## 已向HIP官方库提交的issue
 - [#1221](https://github.com/ROCm-Developer-Tools/HIP/issues/1221) 路径符字符串替换时错误。已解决。
 
 # 相关文件说明
