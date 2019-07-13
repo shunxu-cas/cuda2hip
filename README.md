@@ -20,13 +20,25 @@ HIP项目的[bin目录](https://github.com/ROCm-Developer-Tools/HIP/tree/master/
 ## hipify-clang代码简介
 [hipify-clang](https://github.com/ROCm-Developer-Tools/HIP/tree/master/hipify-clang)作为HIP的一个子模块而存在，官方代码文件见 https://github.com/ROCm-Developer-Tools/HIP/tree/master/hipify-clang ，理解其需要一些Clang和LLVM知识背景。相关代码文件简介如下：
 
-- **main.cpp** 入口函数main的定义文件。首先完成命令行参数解析，支持Perl和Python的map导出（见其中的generatePerl和generatePython两个函数），对每个输入待转码的文件，会创建RefactoringTool和actionFactory对象，并填充相应的Clang RefactoringTool的工作参数，最终构建出Clang refactoring的基本框架，核心在于执行`Tool.runAndSave(&actionFactory)`启动整个重构的工作流程，其中会调用重载的HipifyAction类中定义的转码函数。
-- **ArgParse.cpp/.h** 定义命令行参数的解析，在main函数中被调用。
-- **ReplacementsFrontendActionFactory.h** 定义一个基于`clang::tooling::FrontendActionFactory`的工厂类，main中实例化为对象actionFactory，供`Tool.runAndSave`函数调用。
-- **LLVMCompat.cpp/.h** 新建了命令空间llcompat，其中定义兼容不同版本的各类函数，包括SourceLocation的begin和end定位函数、getReplacements函数、insertReplacement函数和EnterPreprocessorTokenStream函数等等。
-- **CUDA2HIP.cpp/.h** 定义两个`std::map<llvm::StringRef, hipCounter>`类型的数据对象CUDA_RENAMES_MAP和CUDA_INCLUDE_MAP。在CUDA到HIP转码时，函数名和type名的转码映射关系定义在CUDA_RENAMES_MAP中，它们又由CUDA2HIP_XXX_API_function.cpp和CUDA2HIP_XXX_API_type.cpp中定义的子类map组合而来。
+- **main.cpp** 入口函数main的定义文件。
+  首先完成命令行参数解析，支持Perl和Python的map导出（见其中的generatePerl和generatePython两个函数），对每个输入待转码的文件，会创建RefactoringTool和actionFactory对象，并填充相应的Clang RefactoringTool的工作参数，最终构建出Clang refactoring的基本框架，核心在于执行`Tool.runAndSave(&actionFactory)`启动整个重构的工作流程，其中会调用重载的HipifyAction类中定义的转码函数。
+
+- **ArgParse.cpp/.h** 定义命令行参数的解析。
+  在main函数中被调用。
+
+- **ReplacementsFrontendActionFactory.h** 定义一个基于`clang::tooling::FrontendActionFactory`的工厂类。
+  main中实例化为对象actionFactory，供`Tool.runAndSave`函数调用。
+
+- **LLVMCompat.cpp/.h** 新建了命令空间llcompat和定义版本兼容函数。
+  其中定义兼容不同版本的各类函数，包括SourceLocation的begin和end定位函数、getReplacements函数、insertReplacement函数和EnterPreprocessorTokenStream函数等等。
+
+- **CUDA2HIP.cpp/.h** 定义转码映射关系对象。
+  定义了两个`std::map<llvm::StringRef, hipCounter>`类型的数据对象CUDA_RENAMES_MAP和CUDA_INCLUDE_MAP。在CUDA到HIP转码时，函数名和type名的转码映射关系定义在CUDA_RENAMES_MAP中，它们又由CUDA2HIP_XXX_API_functions.cpp和CUDA2HIP_XXX_API_types.cpp中定义的子类map组合而来。
  头文件名替换映射关系定义在CUDA_INCLUDE_MAP中。
-- **HipifyAction.cpp/.h** 定义了HipifyAction类，继承了`clang::ASTFrontendAction`和`clang::ast_matchers::MatchFinder::MatchCallback`接口，实现基于Clang前端解析重命名机制的行为。这里是实现转码的重心之处。函数名和type名转码的重命名操作在RewriteToken函数中完成。HipifyAction的关键函数体结构为
+
+- **HipifyAction.cpp/.h** 定义了HipifyAction类。
+  HipifyAction类继承了`clang::ASTFrontendAction`和`clang::ast_matchers::MatchFinder::MatchCallback`接口，实现基于Clang前端解析重命名机制的行为。这里是实现转码的重心之处。函数名和type名转码的重命名操作在RewriteToken函数中完成。HipifyAction的关键函数体结构为
+  
 ```cpp
 void HipifyAction::ExecuteAction() { //重载ASTFrontendAction的接口函数
  while (RawTok.isNot(clang::tok::eof)) {
