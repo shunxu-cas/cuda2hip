@@ -51,11 +51,11 @@ void HipifyAction::run(const clang::ast_matchers::MatchFinder::MatchResult& Resu
 - **Statistics.cpp/.h** 定义转码统计类，按子类型计数，便于最后输出统计结果。
 - **StringUitils.cpp/.h** 定义String操作的辅助类。
 
-## 提交的代码issue
+## 提交的issue
   当前本项目向HIP官方库提交的issue列表：
 - [#1221](https://github.com/ROCm-Developer-Tools/HIP/issues/1221) 路径符字符串替换时错误。已解决。
 
-#2. 相关文件说明
+# 2. 相关文件说明
 本项目中，主要文件说明：
 - hipify-perl
   基于hipify-clang最新map内容的版本
@@ -68,7 +68,7 @@ void HipifyAction::run(const clang::ast_matchers::MatchFinder::MatchResult& Resu
 - cuda2hipsed.sh 
   调用hipify-perl和sed脚本实现文件夹的转码
 
-#3. 使用方法
+# 3. 使用方法
 CUDA到HIP转码通常基于hipify-clang或hipify-perl。
 - 直接使用hipify-clang进行代码转换，理论上hipify-clang是最准确的转码方式，但是它基于编译过程，对软件编译头文件有强烈依赖，容易导致编译过程中断，对转码产生一定影响。
 - 还有一种折中的办法，是使用hipify-clang的输出map更新hipify-perl脚本。先用hipify-perl脚本进行主体转换，再用cuda2hip.sed脚本补充转换。应用这两个脚本转换之后，转码成功率相对高些。
