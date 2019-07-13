@@ -38,7 +38,7 @@ HIP项目的[bin目录](https://github.com/ROCm-Developer-Tools/HIP/tree/master/
 
 - **HipifyAction.cpp/.h** 定义了HipifyAction类。
   HipifyAction类继承了`clang::ASTFrontendAction`和`clang::ast_matchers::MatchFinder::MatchCallback`接口，实现基于Clang前端解析重命名机制的行为。这里是实现转码的重心之处。函数名和type名转码的重命名操作在RewriteToken函数中完成。HipifyAction的关键函数体结构为
-  
+
 ```cpp
 void HipifyAction::ExecuteAction() { //重载ASTFrontendAction的接口函数
  while (RawTok.isNot(clang::tok::eof)) {
@@ -63,12 +63,9 @@ void HipifyAction::run(const clang::ast_matchers::MatchFinder::MatchResult& Resu
 - **Statistics.cpp/.h** 定义转码统计类，按子类型计数，便于最后输出统计结果。
 - **StringUitils.cpp/.h** 定义String操作的辅助类。
 
-## 提交的issue
-  当前本项目向HIP官方库提交的issue列表：
-- [#1221](https://github.com/ROCm-Developer-Tools/HIP/issues/1221) 路径符字符串替换时错误。已解决。
+# 2. 使用说明
 
-# 2. 相关文件说明
-本项目中，主要文件说明：
+本项目中，主要文件简介：
 - hipify-perl
   基于hipify-clang最新map内容的版本
 - hipify-cmakefile
@@ -80,7 +77,6 @@ void HipifyAction::run(const clang::ast_matchers::MatchFinder::MatchResult& Resu
 - cuda2hipsed.sh 
   调用hipify-perl和sed脚本实现文件夹的转码
 
-# 3. 使用方法
 CUDA到HIP转码通常基于hipify-clang或hipify-perl。
 - 直接使用hipify-clang进行代码转换，理论上hipify-clang是最准确的转码方式，但是它基于编译过程，对软件编译头文件有强烈依赖，容易导致编译过程中断，对转码产生一定影响。
 - 还有一种折中的办法，是使用hipify-clang的输出map更新hipify-perl脚本。先用hipify-perl脚本进行主体转换，再用cuda2hip.sed脚本补充转换。应用这两个脚本转换之后，转码成功率相对高些。
@@ -134,3 +130,7 @@ find . -type f -name *.c* -o -name *.h* -o -name *.inl |xargs sed -i -f cuda2hip
 ./cuda2hipsed.sh <dir>
 ```
 调用hipify-perl和cuda2hip.sed脚本进行文件夹内所有代码转换。默认通配`*.c*`、`*.h*`和`*.inl`文件。`<dir>`为待转换的CUDA代码所在目录名，可以使用空格输入多个文件目录。
+
+# 3. 提交的issue
+  当前本项目向HIP官方库提交的issue列表：
+- [#1221](https://github.com/ROCm-Developer-Tools/HIP/issues/1221) 路径符字符串替换时错误。已解决。
