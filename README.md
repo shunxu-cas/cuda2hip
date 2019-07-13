@@ -1,27 +1,62 @@
-# CUDA到HIP转码
+# 1. CUDA到HIP转码
+本项目分析CUDA到HIP转码的实现机制，提供一套较完善的CUDA到HIP代码转换的工具，包含及时更新版本的hipify-perl脚本和部分补充脚本。
 
-## 转码的原理
+## CUDA与HIP
 CUDA是NVIDIA开发的GPU SDK（软件开发框架），主要针对NVIDIA GPU硬件开发，而HIP是AMD开发的GPU SDK，主要是针对AMD GPU硬件开发，同时兼容NVIDIA GPU硬件上的开发。试想AMD为何会如此雄心壮志？其实是无奈之举。显然当今CUDA的生态处于绝对优势（dominant），AMD要想迎头赶上，必须兼容CUDA。如何实现兼容CUDA？答案就是利用HIP。
 
 HIP（Heterogeneous-Computing Interface for Portability）实际上就是构造异构计算的接口，一方面对接AMD HCC（Heterogeneous Compute Compiler），另一方面对接CUDA NVCC。HIP位于HCC和NVCC的上层（或者说在HC和CUDA的上层），HIP的API接口与CUDA API接口类似，但不完全相同。CUDA代码需要通过转码改写为HIP形式才可以在AMD GPU上编译运行，AMD编译环境称为ROCm（Radeon Open Compute Platform），早期使用HCC/HC模式，而今主要发展基于Clang和LLVM开发的编译器，实际上命令行在Clang模式下，hcc就是alias到clang命令。我们都知道Clang+LLVM是一个开源的编译器框架，除了支持C/C++编译，也支持[CUDA的编译](https://llvm.org/docs/CompileCudaWithLLVM.html#compiling-cuda-code)。AMD将Clang+LLVM进行扩展形成HIP的底层编译器，以支持AMD GPU编译。实际上在ROCm环境，HIP有三种平台模式（通过环境变量HIP_PLATFORM区别）：clang、hcc和nvcc。而HIP提供的hipcc命令，实质是一个perl脚本，通过HIP_PLATFORM等环境变量，调用不同的底层编译器，实现统一编译模式。
 
 <img src="note/hip_workflow.png" height="300px"/>
 
-## 转码的实现
-如果你留意，可以发现ROCm的HIP项目中提供了一个[hipify-clang](https://github.com/ROCm-Developer-Tools/HIP/tree/master/hipify-clang)的工具。这个hipify-clang工具是基于编译器的词法和语义，理论上是最可靠的一种代码转换方式。因为字面意思的文本转换难以区分API语义，如很难分别是函数名、参数名还是include头文件名等。
+## HIP转码的实现
+如果你留意，可以发现ROCm的HIP项目中提供了一个[hipify-clang](https://github.com/ROCm-Developer-Tools/HIP/tree/master/hipify-clang)的工具。这个hipify-clang工具是基于Clang编译器的[抽象语法树](https://clang.llvm.org/docs/IntroductionToTheClangAST.html)和[重构引擎](https://clang.llvm.org/docs/RefactoringEngine.html)机制，实现CUDA到HIP的API函数名和type名的重命名和include头文件名的替换（详见下一节分析），理论上是最可靠的一种代码转换方式。因为字面意思的文本转换难以区分API语义，如分别函数名还是参数名。
 
 hipify-clang从根本上可以解决CUDA到HIP的转码，但不等于说没有困难，困难在于CUDA的版本很多，各版本之间也有不兼容的API问题，而且CUDA少量函数或变量名，在HIP底层并没有实现对应体。
 
 但总的来说，AMD的伙计们还是很给力，不断在更新hipify-clang，也支持最新CUDA 10.1的API转换。基于hipify-clang工具还可以生成perl转码的map文件或python转码的map文件，这里的map文件实质就是转码函数或变量名的映射代码行。一般hipify-clang是随着ROCm环境一起安装的，没法及时更新。导致hipify-clang的新功能没法应用。
 
-HIP项目的[bin目录](https://github.com/ROCm-Developer-Tools/HIP/tree/master/bin)中提供了一个名为hipify-perl的可执行的脚本，借助perl语言定义了CUDA到HIP转码的主体框架以及转换名称的map内容，这个map内容实际上是由hipify-clang工具生成。更新了hipify-clang工具，也应该更新hipify-perl脚本。但hipify-clang工具需要Clang+LLVM的SDK环境，这是一个较复杂的开发软件环境，一般用户难以驾驭，导致编译hipify-clang有困难。
+HIP项目的[bin目录](https://github.com/ROCm-Developer-Tools/HIP/tree/master/bin)中提供了一个名为hipify-perl的可执行的脚本，借助perl语言定义了CUDA到HIP转码的主体框架以及转换名称的map内容，这个map内容实际上是由hipify-clang工具生成。更新了hipify-clang工具，也应该更新hipify-perl脚本。但hipify-clang工具需要Clang+LLVM的SDK环境，这是一个较复杂的开发软件环境，一般用户难以驾驭，导致编译hipify-clang有困难。不过，本项目中直接提供了最新的hipify-perl脚本。
 
-本项目提供一套较完善的CUDA到HIP代码转换的工具，内置了及时更新版本的hipify-perl脚本，同时提供部分脚本补充hipify-clang和hipify-perl转码的不足。
+## hipify-clang代码简介
+[hipify-clang](https://github.com/ROCm-Developer-Tools/HIP/tree/master/hipify-clang)作为HIP的一个子模块而存在，官方代码文件见 https://github.com/ROCm-Developer-Tools/HIP/tree/master/hipify-clang ，理解其需要一些Clang和LLVM知识背景。相关代码文件简介如下：
 
-## 已向HIP官方库提交的issue
+- **main.cpp** 入口函数main的定义文件。首先完成命令行参数解析，支持Perl和Python的map导出（见其中的generatePerl和generatePython两个函数），对每个输入待转码的文件，会创建RefactoringTool和actionFactory对象，并填充相应的Clang RefactoringTool的工作参数，最终构建出Clang refactoring的基本框架，核心在于执行`Tool.runAndSave(&actionFactory)`启动整个重构的工作流程，其中会调用重载的HipifyAction类中定义的转码函数。
+- **ArgParse.cpp/.h** 定义命令行参数的解析，在main函数中被调用。
+- **ReplacementsFrontendActionFactory.h** 定义一个基于`clang::tooling::FrontendActionFactory`的工厂类，main中实例化为对象actionFactory，供`Tool.runAndSave`函数调用。
+- **LLVMCompat.cpp/.h** 新建了命令空间llcompat，其中定义兼容不同版本的各类函数，包括SourceLocation的begin和end定位函数、getReplacements函数、insertReplacement函数和EnterPreprocessorTokenStream函数等等。
+- **CUDA2HIP.cpp/.h** 定义两个`std::map<llvm::StringRef, hipCounter>`类型的数据对象CUDA_RENAMES_MAP和CUDA_INCLUDE_MAP。在CUDA到HIP转码时，函数名和type名的转码映射关系定义在CUDA_RENAMES_MAP中，它们又由CUDA2HIP_XXX_API_function.cpp和CUDA2HIP_XXX_API_type.cpp中定义的子类map组合而来。
+ 头文件名替换映射关系定义在CUDA_INCLUDE_MAP中。
+- **HipifyAction.cpp/.h** 定义了HipifyAction类，继承了`clang::ASTFrontendAction`和`clang::ast_matchers::MatchFinder::MatchCallback`接口，实现基于Clang前端解析重命名机制的行为。这里是实现转码的重心之处。函数名和type名转码的重命名操作在RewriteToken函数中完成。HipifyAction的关键函数体结构为
+```cpp
+void HipifyAction::ExecuteAction() { //重载ASTFrontendAction的接口函数
+ while (RawTok.isNot(clang::tok::eof)) {
+    RewriteToken(RawTok); //调用自定义函数，执行CUDA_RENAMES_MAP替换。
+    RawLex.LexFromRawLexer(RawTok);
+  }
+  // Register yourself as the preprocessor callback, by proxy.
+  // 自定义预处理阶段的回调函数，跳转调用hipifyAction的InclusionDirective和PragmaDirective函数
+  // InclusionDirective函数完成CUDA_INCLUDE_MAP替换。
+  PP.addPPCallbacks(std::unique_ptr<PPCallbackProxy>(new PPCallbackProxy(*this)));
+  // Now we're done futzing with the lexer, have the subclass proceeed with Sema and AST matching.
+  clang::ASTFrontendAction::ExecuteAction();//完成基类的操作
+}
+
+void HipifyAction::run(const clang::ast_matchers::MatchFinder::MatchResult& Result) {//重载MatchCallback的接口函数
+  if (cudaLaunchKernel(Result)) return; //调用自定义函数
+  if (cudaSharedIncompleteArrayVar(Result)) return;//调用自定义函数
+}
+```
+ 其中cudaLaunchKernel实现CUDA `kernel<<<*>>>` 函数的替换。cudaSharedIncompleteArrayVar实现 CUDA `__shared__`变量定义的重构，即添加HIP_DYNAMIC_SHARED宏包装。
+
+- **Statistics.cpp/.h** 定义转码统计类，按子类型计数，便于最后输出统计结果。
+- **StringUitils.cpp/.h** 定义String操作的辅助类。
+
+## 提交的代码issue
+  当前本项目向HIP官方库提交的issue列表：
 - [#1221](https://github.com/ROCm-Developer-Tools/HIP/issues/1221) 路径符字符串替换时错误。已解决。
 
-# 相关文件说明
+#2. 相关文件说明
+本项目中，主要文件说明：
 - hipify-perl
   基于hipify-clang最新map内容的版本
 - hipify-cmakefile
@@ -33,7 +68,7 @@ HIP项目的[bin目录](https://github.com/ROCm-Developer-Tools/HIP/tree/master/
 - cuda2hipsed.sh 
   调用hipify-perl和sed脚本实现文件夹的转码
 
-# 使用方法
+#3. 使用方法
 CUDA到HIP转码通常基于hipify-clang或hipify-perl。
 - 直接使用hipify-clang进行代码转换，理论上hipify-clang是最准确的转码方式，但是它基于编译过程，对软件编译头文件有强烈依赖，容易导致编译过程中断，对转码产生一定影响。
 - 还有一种折中的办法，是使用hipify-clang的输出map更新hipify-perl脚本。先用hipify-perl脚本进行主体转换，再用cuda2hip.sed脚本补充转换。应用这两个脚本转换之后，转码成功率相对高些。
