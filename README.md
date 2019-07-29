@@ -61,7 +61,7 @@ void HipifyAction::run(const clang::ast_matchers::MatchFinder::MatchResult& Resu
  其中cudaLaunchKernel实现CUDA `kernel<<<*>>>` 函数的替换。cudaSharedIncompleteArrayVar实现 CUDA `__shared__`变量定义的重构，即添加HIP_DYNAMIC_SHARED宏包装。
 
 - **Statistics.cpp/.h** 定义转码统计类，按子类型计数，便于最后输出统计结果。
-- **StringUitils.cpp/.h** 定义String操作的辅助类。
+- **StringUitils.cpp/.h** 定义String辅助操作的类。
 
 # 2. 使用说明
 
@@ -93,7 +93,7 @@ hipify-clang是基于Clang+LLVM SDK编译的二进制可执行文件。需要在
 ```
 ./hipify-perl <file>
 ```
-`<file>`为待转换的CUDA代码文件名
+`<file>`为待转换的CUDA代码文件名。程序在转码之后会检验代码是否还包含cuda、cublas和curand等字眼，如果存在则给出警告（warning）提示，这些警告需要我们确认是否需要转码。
 
 ## cuda2hip.sh
 
@@ -134,3 +134,4 @@ find . -type f -name *.c* -o -name *.h* -o -name *.inl |xargs sed -i -f cuda2hip
 # 3. 提交的issue
   当前本项目向HIP官方库提交的issue列表：
 - [#1221](https://github.com/ROCm-Developer-Tools/HIP/issues/1221) 路径符字符串替换时错误。已解决。
+- [#1257](https://github.com/ROCm-Developer-Tools/HIP/issues/1257) curandStateXXX类型转码遗留问题。待解决。
