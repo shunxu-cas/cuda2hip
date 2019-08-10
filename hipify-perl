@@ -698,11 +698,13 @@ while (@ARGV) {
         $ft{'library'} += s/\bcusparseDcsrilu02\b/hipsparseDcsrilu02/g;
         $ft{'library'} += s/\bcusparseDcsrilu02_analysis\b/hipsparseDcsrilu02_analysis/g;
         $ft{'library'} += s/\bcusparseDcsrilu02_bufferSize\b/hipsparseDcsrilu02_bufferSize/g;
+        $ft{'library'} += s/\bcusparseDcsrilu02_bufferSizeExt\b/hipsparseDcsrilu02_bufferSizeExt/g;
         $ft{'library'} += s/\bcusparseDcsrmm\b/hipsparseDcsrmm/g;
         $ft{'library'} += s/\bcusparseDcsrmm2\b/hipsparseDcsrmm2/g;
         $ft{'library'} += s/\bcusparseDcsrmv\b/hipsparseDcsrmv/g;
         $ft{'library'} += s/\bcusparseDcsrsv2_analysis\b/hipsparseDcsrsv2_analysis/g;
         $ft{'library'} += s/\bcusparseDcsrsv2_bufferSize\b/hipsparseDcsrsv2_bufferSize/g;
+        $ft{'library'} += s/\bcusparseDcsrsv2_bufferSizeExt\b/hipsparseDcsrsv2_bufferSizeExt/g;
         $ft{'library'} += s/\bcusparseDcsrsv2_solve\b/hipsparseDcsrsv2_solve/g;
         $ft{'library'} += s/\bcusparseDdoti\b/hipsparseDdoti/g;
         $ft{'library'} += s/\bcusparseDestroy\b/hipsparseDestroy/g;
@@ -728,11 +730,13 @@ while (@ARGV) {
         $ft{'library'} += s/\bcusparseScsrilu02\b/hipsparseScsrilu02/g;
         $ft{'library'} += s/\bcusparseScsrilu02_analysis\b/hipsparseScsrilu02_analysis/g;
         $ft{'library'} += s/\bcusparseScsrilu02_bufferSize\b/hipsparseScsrilu02_bufferSize/g;
+        $ft{'library'} += s/\bcusparseScsrilu02_bufferSizeExt\b/hipsparseScsrilu02_bufferSizeExt/g;
         $ft{'library'} += s/\bcusparseScsrmm\b/hipsparseScsrmm/g;
         $ft{'library'} += s/\bcusparseScsrmm2\b/hipsparseScsrmm2/g;
         $ft{'library'} += s/\bcusparseScsrmv\b/hipsparseScsrmv/g;
         $ft{'library'} += s/\bcusparseScsrsv2_analysis\b/hipsparseScsrsv2_analysis/g;
         $ft{'library'} += s/\bcusparseScsrsv2_bufferSize\b/hipsparseScsrsv2_bufferSize/g;
+        $ft{'library'} += s/\bcusparseScsrsv2_bufferSizeExt\b/hipsparseScsrsv2_bufferSizeExt/g;
         $ft{'library'} += s/\bcusparseScsrsv2_solve\b/hipsparseScsrsv2_solve/g;
         $ft{'library'} += s/\bcusparseSdoti\b/hipsparseSdoti/g;
         $ft{'library'} += s/\bcusparseSetMatDiagType\b/hipsparseSetMatDiagType/g;
@@ -752,6 +756,7 @@ while (@ARGV) {
         $ft{'library'} += s/\bcusparseXcoosortByRow\b/hipsparseXcoosortByRow/g;
         $ft{'library'} += s/\bcusparseXcoosort_bufferSizeExt\b/hipsparseXcoosort_bufferSizeExt/g;
         $ft{'library'} += s/\bcusparseXcsr2coo\b/hipsparseXcsr2coo/g;
+        $ft{'library'} += s/\bcusparseXcsrilu02_zeroPivot\b/hipsparseXcsrilu02_zeroPivot/g;
         $ft{'library'} += s/\bcusparseXcsrsort\b/hipsparseXcsrsort/g;
         $ft{'library'} += s/\bcusparseXcsrsort_bufferSizeExt\b/hipsparseXcsrsort_bufferSizeExt/g;
         $ft{'library'} += s/\bcusparseXcsrsv2_zeroPivot\b/hipsparseXcsrsv2_zeroPivot/g;
@@ -816,10 +821,14 @@ while (@ARGV) {
         $ft{'include_cuda_main_header'} += s/\bcusparse.h\b/hipsparse.h/g;
         $ft{'include_cuda_main_header'} += s/\bcusparse_v2.h\b/hipsparse.h/g;
         $ft{'type'} += s/\bCUDAContext\b/HIPContext/g;
+        $ft{'type'} += s/\bCUDA_ARRAY3D_DESCRIPTOR\b/HIP_ARRAY3D_DESCRIPTOR/g;
+        $ft{'type'} += s/\bCUDA_ARRAY3D_DESCRIPTOR_st\b/HIP_ARRAY3D_DESCRIPTOR/g;
         $ft{'type'} += s/\bCUDA_ARRAY_DESCRIPTOR\b/HIP_ARRAY_DESCRIPTOR/g;
         $ft{'type'} += s/\bCUDA_ARRAY_DESCRIPTOR_st\b/HIP_ARRAY_DESCRIPTOR/g;
         $ft{'type'} += s/\bCUDA_MEMCPY2D\b/hip_Memcpy2D/g;
         $ft{'type'} += s/\bCUDA_MEMCPY2D_st\b/hip_Memcpy2D/g;
+        $ft{'type'} += s/\bCUaddress_mode\b/hipTextureAddressMode/g;
+        $ft{'type'} += s/\bCUaddress_mode_enum\b/hipTextureAddressMode/g;
         $ft{'type'} += s/\bCUarray\b/hipArray */g;
         $ft{'type'} += s/\bCUarray_format\b/hipArray_format/g;
         $ft{'type'} += s/\bCUarray_format_enum\b/hipArray_format/g;
@@ -983,11 +992,16 @@ while (@ARGV) {
         $ft{'type'} += s/\bcurandGenerator_t\b/hiprandGenerator_t/g;
         $ft{'type'} += s/\bcurandRngType\b/hiprandRngType_t/g;
         $ft{'type'} += s/\bcurandRngType_t\b/hiprandRngType_t/g;
-        $ft{'type'} += s/\bcurandState\b/hiprandState_t/g;
+        $ft{'type'} += s/\bcurandState\b/hiprandState/g;
+        $ft{'type'} += s/\bcurandStateMRG32k3a\b/hiprandStateMRG32k3a/g;
         $ft{'type'} += s/\bcurandStateMRG32k3a_t\b/hiprandStateMRG32k3a_t/g;
+        $ft{'type'} += s/\bcurandStateMtgp32\b/hiprandStateMtgp32/g;
         $ft{'type'} += s/\bcurandStateMtgp32_t\b/hiprandStateMtgp32_t/g;
+        $ft{'type'} += s/\bcurandStatePhilox4_32_10\b/hiprandStatePhilox4_32_10/g;
         $ft{'type'} += s/\bcurandStatePhilox4_32_10_t\b/hiprandStatePhilox4_32_10_t/g;
+        $ft{'type'} += s/\bcurandStateSobol32\b/hiprandStateSobol32/g;
         $ft{'type'} += s/\bcurandStateSobol32_t\b/hiprandStateSobol32_t/g;
+        $ft{'type'} += s/\bcurandStateXORWOW\b/hiprandStateXORWOW/g;
         $ft{'type'} += s/\bcurandStateXORWOW_t\b/hiprandStateXORWOW_t/g;
         $ft{'type'} += s/\bcurandState_t\b/hiprandState_t/g;
         $ft{'type'} += s/\bcurandStatus\b/hiprandStatus_t/g;
@@ -1308,6 +1322,12 @@ while (@ARGV) {
         $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_GLOBAL_MEMORY_BUS_WIDTH\b/hipDeviceAttributeMemoryBusWidth/g;
         $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_INTEGRATED\b/hipDeviceAttributeIntegrated/g;
         $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_L2_CACHE_SIZE\b/hipDeviceAttributeL2CacheSize/g;
+        $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_WIDTH\b/hipDeviceAttributeMaxTexture1DWidth/g;
+        $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_HEIGHT\b/hipDeviceAttributeMaxTexture2DHeight/g;
+        $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_WIDTH\b/hipDeviceAttributeMaxTexture2DWidth/g;
+        $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH\b/hipDeviceAttributeMaxTexture3DDepth/g;
+        $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT\b/hipDeviceAttributeMaxTexture3DHeight/g;
+        $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH\b/hipDeviceAttributeMaxTexture3DWidth/g;
         $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_X\b/hipDeviceAttributeMaxBlockDimX/g;
         $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Y\b/hipDeviceAttributeMaxBlockDimY/g;
         $ft{'numeric_literal'} += s/\bCU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Z\b/hipDeviceAttributeMaxBlockDimZ/g;
@@ -1407,6 +1427,10 @@ while (@ARGV) {
         $ft{'numeric_literal'} += s/\bCU_SHARED_MEM_CONFIG_FOUR_BYTE_BANK_SIZE\b/hipSharedMemBankSizeFourByte/g;
         $ft{'numeric_literal'} += s/\bCU_STREAM_DEFAULT\b/hipStreamDefault/g;
         $ft{'numeric_literal'} += s/\bCU_STREAM_NON_BLOCKING\b/hipStreamNonBlocking/g;
+        $ft{'numeric_literal'} += s/\bCU_TR_ADDRESS_MODE_BORDER\b/hipAddressModeBorder/g;
+        $ft{'numeric_literal'} += s/\bCU_TR_ADDRESS_MODE_CLAMP\b/hipAddressModeClamp/g;
+        $ft{'numeric_literal'} += s/\bCU_TR_ADDRESS_MODE_MIRROR\b/hipAddressModeMirror/g;
+        $ft{'numeric_literal'} += s/\bCU_TR_ADDRESS_MODE_WRAP\b/hipAddressModeWrap/g;
         $ft{'numeric_literal'} += s/\bCU_TR_FILTER_MODE_LINEAR\b/hipFilterModeLinear/g;
         $ft{'numeric_literal'} += s/\bCU_TR_FILTER_MODE_POINT\b/hipFilterModePoint/g;
         $ft{'numeric_literal'} += s/\bcudaAddressModeBorder\b/hipAddressModeBorder/g;
@@ -1442,6 +1466,12 @@ while (@ARGV) {
         $ft{'numeric_literal'} += s/\bcudaDevAttrMaxRegistersPerBlock\b/hipDeviceAttributeMaxRegistersPerBlock/g;
         $ft{'numeric_literal'} += s/\bcudaDevAttrMaxSharedMemoryPerBlock\b/hipDeviceAttributeMaxSharedMemoryPerBlock/g;
         $ft{'numeric_literal'} += s/\bcudaDevAttrMaxSharedMemoryPerMultiprocessor\b/hipDeviceAttributeMaxSharedMemoryPerMultiprocessor/g;
+        $ft{'numeric_literal'} += s/\bcudaDevAttrMaxTexture1DWidth\b/hipDeviceAttributeMaxTexture1DWidth/g;
+        $ft{'numeric_literal'} += s/\bcudaDevAttrMaxTexture2DHeight\b/hipDeviceAttributeMaxTexture2DHeight/g;
+        $ft{'numeric_literal'} += s/\bcudaDevAttrMaxTexture2DWidth\b/hipDeviceAttributeMaxTexture2DWidth/g;
+        $ft{'numeric_literal'} += s/\bcudaDevAttrMaxTexture3DDepth\b/hipDeviceAttributeMaxTexture3DDepth/g;
+        $ft{'numeric_literal'} += s/\bcudaDevAttrMaxTexture3DHeight\b/hipDeviceAttributeMaxTexture3DHeight/g;
+        $ft{'numeric_literal'} += s/\bcudaDevAttrMaxTexture3DWidth\b/hipDeviceAttributeMaxTexture3DWidth/g;
         $ft{'numeric_literal'} += s/\bcudaDevAttrMaxThreadsPerBlock\b/hipDeviceAttributeMaxThreadsPerBlock/g;
         $ft{'numeric_literal'} += s/\bcudaDevAttrMaxThreadsPerMultiProcessor\b/hipDeviceAttributeMaxThreadsPerMultiProcessor/g;
         $ft{'numeric_literal'} += s/\bcudaDevAttrMemoryClockRate\b/hipDeviceAttributeMemoryClockRate/g;
@@ -1561,6 +1591,9 @@ while (@ARGV) {
         $ft{'define'} += s/\bCU_MEMHOSTREGISTER_DEVICEMAP\b/hipHostRegisterMapped/g;
         $ft{'define'} += s/\bCU_MEMHOSTREGISTER_IOMEMORY\b/hipHostRegisterIoMemory/g;
         $ft{'define'} += s/\bCU_MEMHOSTREGISTER_PORTABLE\b/hipHostRegisterPortable/g;
+        $ft{'define'} += s/\bCU_TRSA_OVERRIDE_FORMAT\b/HIP_TRSA_OVERRIDE_FORMAT/g;
+        $ft{'define'} += s/\bCU_TRSF_NORMALIZED_COORDINATES\b/HIP_TRSF_NORMALIZED_COORDINATES/g;
+        $ft{'define'} += s/\bCU_TRSF_READ_AS_INTEGER\b/HIP_TRSF_READ_AS_INTEGER/g;
         $ft{'define'} += s/\bREGISTER_CUDA_OPERATOR\b/REGISTER_HIP_OPERATOR/g;
         $ft{'define'} += s/\bREGISTER_CUDA_OPERATOR_CREATOR\b/REGISTER_HIP_OPERATOR_CREATOR/g;
         $ft{'define'} += s/\b__CUDACC__\b/__HIPCC__/g;
@@ -1716,7 +1749,7 @@ while (@ARGV) {
         # Print it!
         # TODO - would like to move this code outside loop but it uses $_ which contains the whole file.
         unless ($no_output) {
-            my $apiCalls   =$ft{'error'} + $ft{'init'} + $ft{'version'} + $ft{'device'} + $ft{'context'} + $ft{'module'} + $ft{'memory'} + $ft{'addressing'} + $ft{'stream'} + $ft{'event'} + $ft{'external_resource_interop'} + $ft{'stream_memory'} + $ft{'execution'} + $ft{'graph'} + $ft{'occupancy'} + $ft{'texture'} + $ft{'surface'} + $ft{'peer'} + $ft{'graphics'} + $ft{'profiler'} + $ft{'openGL'} + $ft{'D3D9'} + $ft{'D3D10'} + $ft{'D3D11'} + $ft{'VDPAU'} + $ft{'EGL'} + $ft{'thread'} + $ft{'complex'} + $ft{'library'} + $ft{'device_library'} + $ft{'include'} + $ft{'include_cuda_main_header'} + $ft{'type'} + $ft{'literal'} + $ft{'numeric_literal'} + $ft{'define'};
+            my $apiCalls   = $ft{'error'} + $ft{'init'} + $ft{'version'} + $ft{'device'} + $ft{'context'} + $ft{'module'} + $ft{'memory'} + $ft{'addressing'} + $ft{'stream'} + $ft{'event'} + $ft{'external_resource_interop'} + $ft{'stream_memory'} + $ft{'execution'} + $ft{'graph'} + $ft{'occupancy'} + $ft{'texture'} + $ft{'surface'} + $ft{'peer'} + $ft{'graphics'} + $ft{'profiler'} + $ft{'openGL'} + $ft{'D3D9'} + $ft{'D3D10'} + $ft{'D3D11'} + $ft{'VDPAU'} + $ft{'EGL'} + $ft{'thread'} + $ft{'complex'} + $ft{'library'} + $ft{'device_library'} + $ft{'include'} + $ft{'include_cuda_main_header'} + $ft{'type'} + $ft{'literal'} + $ft{'numeric_literal'} + $ft{'define'};
             my $kernStuff  = $hasDeviceCode + $ft{'kern'};
             my $totalCalls = $apiCalls + $kernStuff;
             $is_dos = m/\r\n$/;

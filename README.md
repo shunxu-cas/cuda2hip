@@ -62,6 +62,14 @@ void HipifyAction::run(const clang::ast_matchers::MatchFinder::MatchResult& Resu
 
 - **Statistics.cpp/.h** 定义转码统计类，按子类型计数，便于最后输出统计结果。
 - **StringUitils.cpp/.h** 定义String辅助操作的类。
+  
+另外在HIP项目的tests目录，有hipify-clang的单元测试文件，可以作为hipify-clang和hipify-perl的测试输入文件。如
+- tests/hipify-clang/unit_tests/headers/headers_test_10.cu                   
+- tests/hipify-clang/unit_tests/headers/headers_test_11.cu                   
+- tests/hipify-clang/unit_tests/libraries/cuRAND/poisson_api_example.cu  
+
+## hipify-perl程序简介
+hipify-perl是HIP项目提供的一个CUDA到HIP转码的perl脚本，官方代码文件见 https://github.com/ROCm-Developer-Tools/HIP/blob/master/bin/hipify-perl ，本质上是基于文本字符串替换方式进行CUDA到HIP转码的关键字替换，包括类型名和函数名等替换。hipify-perl中的关键字替换的map可以从hipify-clang导出，hipify-perl提供了一个转码的框架。
 
 # 2. 使用说明
 
@@ -134,4 +142,4 @@ find . -type f -name *.c* -o -name *.h* -o -name *.inl |xargs sed -i -f cuda2hip
 # 3. 提交的issue
   当前本项目向HIP官方库提交的issue列表：
 - [#1221](https://github.com/ROCm-Developer-Tools/HIP/issues/1221) 路径符字符串替换时错误。已解决。
-- [#1257](https://github.com/ROCm-Developer-Tools/HIP/issues/1257) curandStateXXX类型转码遗留问题。待解决。
+- [#1257](https://github.com/ROCm-Developer-Tools/HIP/issues/1257) curandStateXXX类型转码遗留问题。己解决。
